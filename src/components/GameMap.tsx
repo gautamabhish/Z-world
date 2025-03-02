@@ -26,12 +26,7 @@ export const GameMap = ({ model }) => {
     return { transportMeshes, staticMeshes };
   }, [scene]);
 
-  // Collision handler
-  const handleCollision = useCallback((event) => {
-    if (event?.target?.rigidBody?.userData?.type === "drive") {
-      setDriveOptions(true);
-    }
-  }, []);
+ 
 
   return (
     <group ref={group}>
@@ -42,34 +37,16 @@ export const GameMap = ({ model }) => {
           colliders="cuboid" // Larger collider than the object
           activeEvents="collision"
           type="dynamic"
-          onCollisionEnter={handleCollision}
-          mass={300}
+          linearDamping={16}
+          angularDamping={100}
+          gravityScale={6}
+          friction={1.5}
           userData={{ type: "drive" }}
+          mass={5000}
         >
           <primitive object={mesh} />
         </RigidBody>
       ))}
-
-      {/* Show Drive Button Only on Collision */}
-      {driveOptions && (
-        <Html position={[0, 2, 0]}>
-          <button
-            style={{
-              background: "rgba(255, 255, 255, 0.8)",
-              border: "none",
-              padding: "10px 20px",
-              cursor: "pointer",
-              fontSize: "16px",
-              borderRadius: "5px",
-              position:"absolute",
-              zIndex:"100",
-            }}
-            onClick={() => console.log("Drive mode activated")}
-          >
-            Drive
-          </button>
-        </Html>
-      )}
 
       {/* Static Meshes (Fixed) */}
       <RigidBody colliders="trimesh" type="fixed">
